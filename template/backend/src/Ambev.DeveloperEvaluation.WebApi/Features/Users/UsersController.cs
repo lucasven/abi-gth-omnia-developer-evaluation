@@ -82,6 +82,9 @@ public class UsersController : BaseController
         var command = _mapper.Map<GetUserCommand>(request.Id);
         var response = await _mediator.Send(command, cancellationToken);
 
+        if (response == null)
+            return NotFound();
+
         return Ok(new ApiResponseWithData<GetUserResponse>
         {
             Success = true,
