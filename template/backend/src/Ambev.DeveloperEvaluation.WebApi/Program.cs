@@ -8,6 +8,7 @@ using Ambev.DeveloperEvaluation.ORM;
 using Ambev.DeveloperEvaluation.WebApi.Middleware;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 using Serilog;
 
 namespace Ambev.DeveloperEvaluation.WebApi;
@@ -27,14 +28,30 @@ public class Program
             builder.Services.AddEndpointsApiExplorer();
 
             builder.AddBasicHealthChecks();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.CustomSchemaIds(type => type.ToString());
+            });
 
-            builder.Services.AddDbContext<DefaultContext>(options =>
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(
                     builder.Configuration.GetConnectionString("DefaultConnection"),
                     b => b.MigrationsAssembly("Ambev.DeveloperEvaluation.ORM")
                 )
             );
+
+            builder.Services.AddSingleton<IMongoClient>(sp =>
+            {
+                var mongoConnectionString = builder.Configuration.GetConnectionString("MongoConnection");
+                return new MongoClient(mongoConnectionString);
+            });
+
+            builder.Services.AddScoped(sp =>
+            {
+                var mongoClient = sp.GetRequiredService<IMongoClient>();
+                var databaseName = builder.Configuration["MongoDB:DatabaseName"] ?? "developer_evaluation";
+                return mongoClient.GetDatabase(databaseName);
+            });
 
             builder.Services.AddJwtAuthentication(builder.Configuration);
 
@@ -53,6 +70,9 @@ public class Program
             builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
             var app = builder.Build();
+            
+            app.UseDefaultLogging();
+            
             app.UseMiddleware<ValidationExceptionMiddleware>();
 
             if (app.Environment.IsDevelopment())
