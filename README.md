@@ -60,6 +60,13 @@ The API documentation is available at:
 - Swagger UI: `http://localhost:8080/swagger`
 - OpenAPI JSON: `http://localhost:8080/swagger/v1/swagger.json`
 
+I Updated all these API Documentation to fit the current API Responses.
+### Detailed API Documentation
+- [Authentication](.doc/auth-api.md)
+- [Products](.doc/products-api.md)
+- [Sales](.doc/sales-api.md)
+- [Users](.doc/users-api.md)
+
 ## Project Structure
 
 ```

@@ -2,217 +2,89 @@
 
 ### Users
 
-#### GET /users
-- Description: Retrieve a list of all users
-- Query Parameters:
-  - `_page` (optional): Page number for pagination (default: 1)
-  - `_size` (optional): Number of items per page (default: 10)
-  - `_order` (optional): Ordering of results (e.g., "username asc, email desc")
-- Response: 
-  ```json
-  {
-    "data": [
-      {
-        "id": "integer",
-        "email": "string",
-        "username": "string",
-        "password": "string",
-        "name": {
-          "firstname": "string",
-          "lastname": "string"
-        },
-        "address": {
-          "city": "string",
-          "street": "string",
-          "number": "integer",
-          "zipcode": "string",
-          "geolocation": {
-            "lat": "string",
-            "long": "string"
-          }
-        },
-        "phone": "string",
-        "status": "string (enum: Active, Inactive, Suspended)",
-        "role": "string (enum: Customer, Manager, Admin)"
-      }
-    ],
-    "totalItems": "integer",
-    "currentPage": "integer",
-    "totalPages": "integer"
-  }
-  ```
-
 #### POST /users
 - Description: Add a new user
 - Request Body:
   ```json
   {
-    "email": "string",
-    "username": "string",
-    "password": "string",
-    "name": {
-      "firstname": "string",
-      "lastname": "string"
-    },
-    "address": {
-      "city": "string",
-      "street": "string",
-      "number": "integer",
-      "zipcode": "string",
-      "geolocation": {
-        "lat": "string",
-        "long": "string"
-      }
-    },
-    "phone": "string",
-    "status": "string (enum: Active, Inactive, Suspended)",
-    "role": "string (enum: Customer, Manager, Admin)"
+    "email": "john.doe@example.com",
+    "username": "johndoe",
+    "password": "StrongP@ssw0rd"
   }
   ```
 - Response: 
   ```json
   {
-    "id": "integer",
-    "email": "string",
-    "username": "string",
-    "password": "string",
-    "name": {
-      "firstname": "string",
-      "lastname": "string"
-    },
-    "address": {
-      "city": "string",
-      "street": "string",
-      "number": "integer",
-      "zipcode": "string",
-      "geolocation": {
-        "lat": "string",
-        "long": "string"
-      }
-    },
-    "phone": "string",
-    "status": "string (enum: Active, Inactive, Suspended)",
-    "role": "string (enum: Customer, Manager, Admin)"
+    "success": true,
+    "message": "User created successfully",
+    "data": {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "email": "john.doe@example.com",
+      "username": "johndoe"
+    }
   }
   ```
+- Status Codes:
+  - 201: Created
+  - 400: Bad Request (Invalid data or validation errors)
 
 #### GET /users/{id}
 - Description: Retrieve a specific user by ID
 - Path Parameters:
-  - `id`: User ID
+  - `id`: User ID (GUID)
+- Example: GET /users/3fa85f64-5717-4562-b3fc-2c963f66afa6
 - Response: 
   ```json
   {
-    "id": "integer",
-    "email": "string",
-    "username": "string",
-    "password": "string",
-    "name": {
-      "firstname": "string",
-      "lastname": "string"
-    },
-    "address": {
-      "city": "string",
-      "street": "string",
-      "number": "integer",
-      "zipcode": "string",
-      "geolocation": {
-        "lat": "string",
-        "long": "string"
-      }
-    },
-    "phone": "string",
-    "status": "string (enum: Active, Inactive, Suspended)",
-    "role": "string (enum: Customer, Manager, Admin)"
+    "success": true,
+    "message": "User retrieved successfully",
+    "data": {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "email": "john.doe@example.com",
+      "username": "johndoe",
+      "createdAt": "2024-03-15T10:30:00Z",
+      "updatedAt": "2024-03-15T10:30:00Z"
+    }
   }
   ```
-
-#### PUT /users/{id}
-- Description: Update a specific user
-- Path Parameters:
-  - `id`: User ID
-- Request Body:
+- Error Response (404 Not Found):
   ```json
   {
-    "email": "string",
-    "username": "string",
-    "password": "string",
-    "name": {
-      "firstname": "string",
-      "lastname": "string"
-    },
-    "address": {
-      "city": "string",
-      "street": "string",
-      "number": "integer",
-      "zipcode": "string",
-      "geolocation": {
-        "lat": "string",
-        "long": "string"
-      }
-    },
-    "phone": "string",
-    "status": "string (enum: Active, Inactive, Suspended)",
-    "role": "string (enum: Customer, Manager, Admin)"
+    "success": false,
+    "message": "User not found",
+    "errors": ["User with ID '3fa85f64-5717-4562-b3fc-2c963f66afa6' was not found"]
   }
   ```
-- Response: 
-  ```json
-  {
-    "id": "integer",
-    "email": "string",
-    "username": "string",
-    "password": "string",
-    "name": {
-      "firstname": "string",
-      "lastname": "string"
-    },
-    "address": {
-      "city": "string",
-      "street": "string",
-      "number": "integer",
-      "zipcode": "string",
-      "geolocation": {
-        "lat": "string",
-        "long": "string"
-      }
-    },
-    "phone": "string",
-    "status": "string (enum: Active, Inactive, Suspended)",
-    "role": "string (enum: Customer, Manager, Admin)"
-  }
-  ```
+- Status Codes:
+  - 200: OK
+  - 400: Bad Request (Invalid GUID format)
+  - 404: Not Found
 
 #### DELETE /users/{id}
 - Description: Delete a specific user
 - Path Parameters:
-  - `id`: User ID
-- Response: 
+  - `id`: User ID (GUID)
+- Example: DELETE /users/3fa85f64-5717-4562-b3fc-2c963f66afa6
+- Success Response: 
   ```json
   {
-    "id": "integer",
-    "email": "string",
-    "username": "string",
-    "password": "string",
-    "name": {
-      "firstname": "string",
-      "lastname": "string"
-    },
-    "address": {
-      "city": "string",
-      "street": "string",
-      "number": "integer",
-      "zipcode": "string",
-      "geolocation": {
-        "lat": "string",
-        "long": "string"
-      }
-    },
-    "phone": "string",
-    "status": "string (enum: Active, Inactive, Suspended)",
-    "role": "string (enum: Customer, Manager, Admin)"
+    "success": true,
+    "message": "User deleted successfully"
   }
   ```
+- Error Response (404 Not Found):
+  ```json
+  {
+    "success": false,
+    "message": "User not found",
+    "errors": ["User with ID '3fa85f64-5717-4562-b3fc-2c963f66afa6' was not found"]
+  }
+  ```
+- Status Codes:
+  - 200: OK
+  - 400: Bad Request (Invalid GUID format)
+  - 404: Not Found
+
 <br/>
 <div style="display: flex; justify-content: space-between;">
   <a href="./carts-api.md">Previous: Carts API</a>
