@@ -22,7 +22,8 @@ namespace Ambev.DeveloperEvaluation.Application.Products.GetProductsByCategory
 
         public async Task<GetProductsByCategoryResult> Handle(GetProductsByCategoryCommand request, CancellationToken cancellationToken)
         {
-            var (products, totalCount) = await _productRepository.GetByCategoryAsync(request.Category, request.Page, request.Size, request.Order);
+            var (products, totalCount) = await _productRepository
+                .GetByCategoryAsync(request.Category, request.Page, request.Size, request.Order);
             
             return new GetProductsByCategoryResult
             {
