@@ -23,7 +23,7 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
             decimal? minPrice = null,
             decimal? maxPrice = null)
         {
-            var query = _dbSet.AsQueryable();
+            var query = _dbSet.Include(c => c.Ratings).AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(title))
             {
@@ -79,11 +79,22 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
             string category, 
             int page, 
             int size, 
-            string orderBy)
+            string orderBy = null)
         {
-            var query = _dbSet.Where(p => p.Category == category);
+            var query = _dbSet.Include(p => p.Ratings).Where(p => p.Category == category);
+            if(String.IsNullOrEmpty(orderBy))
+            {
+                query = ApplyDefaultOrder(query);
+            }
             var result = await base.GetAllAsync(page, size, query, orderBy);
             return (result.Items, result.TotalCount);
+        }
+
+        public override async Task<Product?> GetByIdAsync(Guid id)
+        {
+            return await _dbSet
+                .Include(s => s.Ratings)
+                .FirstOrDefaultAsync(s => s.Id == id);
         }
     }
 } 
