@@ -1,9 +1,11 @@
+using Ambev.DeveloperEvaluation.WebApi.Common;
+using Microsoft.AspNetCore.Mvc;
+
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Products.GetProductsByCategory
 {
-    public class GetProductsByCategoryRequest
+    public class GetProductsByCategoryRequest : ApiPaginatedRequest
     {
-        public int? Page { get; set; }
-        public int? Size { get; set; }
-        public string Order { get; set; }
+        [FromRoute]
+        public string Category {  get; set; }
     }
 } 
