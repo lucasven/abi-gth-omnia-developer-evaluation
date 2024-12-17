@@ -1,6 +1,8 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Common;
+﻿using Ambev.DeveloperEvaluation.Common.Validation;
+using Ambev.DeveloperEvaluation.Domain.Common;
 using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.Domain.Exceptions;
+using Ambev.DeveloperEvaluation.Domain.Validation;
 
 namespace Ambev.DeveloperEvaluation.Domain.Entities
 {
@@ -8,7 +10,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
     {
         private readonly List<SaleItem> _saleItems;
 
-        public Sale()
+        private Sale()
         {
             _saleItems = new List<SaleItem>();
             CreatedAt = DateTime.UtcNow;
@@ -48,6 +50,9 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
             var sale = this._saleItems.FirstOrDefault(c => c.Id == id);
             if (sale == null)
                 throw new DomainException("Item is not part of the sale items");
+            if(quantity == 0 || quantity > 20)
+                throw new DomainException("Invalid quantity.");
+
             sale.Quantity = quantity;
             if(saleItemStatus.HasValue)
                 sale.Status = saleItemStatus.Value;
@@ -110,11 +115,24 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
         {
             if (customer == null)
                 throw new DomainException("Customer cannot be null.");
+            if(branch == SaleBranch.None)
+                throw new DomainException("Invalid sale branch.");
 
             return new Sale
             {
                 Customer = customer,
                 Branch = branch
+            };
+        }
+
+        public ValidationResultDetail Validate()
+        {
+            var validator = new SaleValidator();
+            var result = validator.Validate(this);
+            return new ValidationResultDetail
+            {
+                IsValid = result.IsValid,
+                Errors = result.Errors.Select(o => (ValidationErrorDetail)o)
             };
         }
     }

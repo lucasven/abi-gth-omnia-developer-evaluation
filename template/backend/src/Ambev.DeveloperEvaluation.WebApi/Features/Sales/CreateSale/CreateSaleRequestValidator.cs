@@ -23,7 +23,7 @@ public class CreateSaleRequestValidator : AbstractValidator<CreateSaleRequest>
 
                     itemRules.RuleFor(x => x.Quantity)
                         .GreaterThan(0).WithMessage("Quantity must be greater than 0")
-                        .LessThan(20).WithMessage("Quantity must be less than 20");
+                        .LessThan(21).WithMessage("Quantity must not be greater than 20");
                 });
             });
     }

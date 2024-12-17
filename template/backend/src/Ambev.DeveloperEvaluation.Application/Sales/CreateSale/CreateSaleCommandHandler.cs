@@ -2,6 +2,7 @@ using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.Domain.Events;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
+using Ambev.DeveloperEvaluation.Domain.Specifications;
 using AutoMapper;
 using MediatR;
 
@@ -42,6 +43,29 @@ public class CreateSaleCommandHandler : IRequestHandler<CreateSaleCommand, Creat
         // Process each item
         foreach (var itemRequest in request.Items)
         {
+            var notMoreThan20specification = new NotMoreThan20EqualItemsSaleItemSpecification();
+            var tier0specification = new DiscountTierZeroSaleItemSpecification();
+            var tier1specification = new DiscountTierOneSaleItemSpecification();
+            var tier2specification = new DiscountTierTwoSaleItemSpecification();
+            var saleItem = new SaleItem { Quantity = itemRequest.Quantity };
+            if (!notMoreThan20specification.IsSatisfiedBy(saleItem))
+            {
+                throw new InvalidOperationException("Item quantity cannot be more than 20");
+            }
+            if(!tier0specification.IsSatisfiedBy(saleItem))
+            {
+                throw new InvalidOperationException("Items with quantity smaller than 4 should not have a discount");
+            }
+            if (!tier1specification.IsSatisfiedBy(saleItem))
+            {
+                throw new InvalidOperationException("Items between 4 and 9 should have a 10% discount");
+            }
+            if (!tier2specification.IsSatisfiedBy(saleItem))
+            {
+                throw new InvalidOperationException("Items between 10 and 20 should have a 20% discount");
+            }
+
+
             var product = await _productRepository.GetByIdAsync(itemRequest.ProductId);
             if (product == null)
                 throw new KeyNotFoundException($"Product with id {itemRequest.ProductId} not found");
