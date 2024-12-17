@@ -28,7 +28,7 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProductRating",
+                name: "ProductRatings",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -38,9 +38,9 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductRating", x => x.Id);
+                    table.PrimaryKey("PK_ProductRatings", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ProductRating_Products_ProductId",
+                        name: "FK_ProductRatings_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
@@ -48,8 +48,8 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductRating_ProductId_RateValue",
-                table: "ProductRating",
+                name: "IX_ProductRatings_ProductId_RateValue",
+                table: "ProductRatings",
                 columns: new[] { "ProductId", "RateValue" },
                 unique: true);
         }
@@ -58,7 +58,7 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ProductRating");
+                name: "ProductRatings");
 
             migrationBuilder.DropTable(
                 name: "Products");

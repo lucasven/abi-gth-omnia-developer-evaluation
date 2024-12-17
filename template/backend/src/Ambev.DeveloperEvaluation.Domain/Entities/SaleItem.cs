@@ -1,10 +1,12 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Common;
 using Ambev.DeveloperEvaluation.Domain.Enums;
+using System.Text.Json.Serialization;
 
 namespace Ambev.DeveloperEvaluation.Domain.Entities
 {
     public class SaleItem : BaseEntity
-    { 
+    {
+        [JsonIgnore]
         public Sale Sale { get; set; }
         
         public Product Product { get; set; }
@@ -29,6 +31,8 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
         { 
             get 
             {
+                //total of each saleitem canceled should be 0
+                if(Status == SaleItemStatus.Canceled) return 0;
                 return (decimal)Quantity * Product.Price * (1 - DiscountPercentage/100);
             }
         }

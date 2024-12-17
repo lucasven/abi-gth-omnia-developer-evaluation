@@ -9,6 +9,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Mappings
         public GetProductsByCategoryProfile()
         {
             CreateMap<GetProductsByCategoryResult, GetProductsByCategoryResponse>();
+            CreateMap<GetProductsByCategoryRequest, GetProductsByCategoryCommand>();
         }
     }
 }
