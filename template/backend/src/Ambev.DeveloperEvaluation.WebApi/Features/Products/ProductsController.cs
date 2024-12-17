@@ -16,6 +16,8 @@ using Ambev.DeveloperEvaluation.WebApi.Features.Products.GetProductById;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.GetUser;
 using System.Threading;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.CreateProduct;
+using Ambev.DeveloperEvaluation.WebApi.Features.Products.GetProductsByCategory;
+using Ambev.DeveloperEvaluation.Domain.DTOs;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Products
 {
@@ -62,12 +64,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Products
             if (result == null)
                 return NotFound();
 
-            return Ok(new ApiResponseWithData<GetProductByIdResponse>
-            {
-                Data = mapper.Map<GetProductByIdResponse>(result),
-                Success = true,
-                Message = "Product retrieved successfully"
-            });
+            return Ok(mapper.Map<GetProductByIdResponse>(result), "Product retrieved successfully");
         }
 
         [HttpPost]
@@ -84,12 +81,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Products
             var command = mapper.Map<CreateProductCommand>(request);
 
             var response = await _mediator.Send(command);
-            return Created(string.Empty, new ApiResponseWithData<CreateProductResult>
-            {
-                Data = mapper.Map<CreateProductResult>(response),
-                Success = true,
-                Message = "Product created successfully"
-            });
+            return Created(nameof(GetById), new {id = response.Id}, mapper.Map<CreateProductResult>(response),"Product created successfully");
         }
 
         [HttpPut]
@@ -105,12 +97,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Products
             if (result == null)
                 return NotFound();
 
-            return Ok(new ApiResponseWithData<UpdateProductResult>
-            {
-                Data = mapper.Map<UpdateProductResult>(result),
-                Success = true,
-                Message = "Product updated successfully"
-            });
+            return Ok(mapper.Map<UpdateProductResult>(result), "Product updated successfully");
         }
 
         [HttpDelete("{id}")]
@@ -124,12 +111,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Products
             if (!result.Success)
                 return NotFound(result);
 
-            return Ok(new ApiResponseWithData<DeleteProductResult>
-            {
-                Data = mapper.Map<DeleteProductResult>(result),
-                Success = true,
-                Message = "Product deleted successfully"
-            });
+            return Ok(mapper.Map<DeleteProductResult>(result), "Product deleted successfully");
         }
 
         [HttpGet("categories")]
@@ -138,27 +120,20 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Products
         {
             var command = new GetProductCategoriesCommand();
             var result = await _mediator.Send(command);
-            return Ok(new ApiResponseWithData<IEnumerable<string>>
-            {
-                Data = mapper.Map<GetProductCategoriesResult>(result).Categories,
-                Success = true,
-                Message = "Product categories retrieved successfully"
-            });
+            return Ok(mapper.Map<GetProductCategoriesResult>(result).Categories, "Product categories retrieved successfully");
         }
 
-        [HttpGet("category/{category}")]
-        [ProducesResponseType(typeof(ApiResponseWithData<GetProductsByCategoryResult>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetByCategory([FromRoute] string category, [FromQuery] GetProductsByCategory.GetProductsByCategoryRequest request)
+        [HttpGet("category/{Category}")]
+        [ProducesResponseType(typeof(ApiResponseWithData<ProductDTO>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetByCategory([FromQuery] GetProductsByCategoryRequest request)
         {
-            var command = mapper.Map< GetProductsByCategoryCommand>(request);
+            var command = mapper.Map<GetProductsByCategoryCommand>(request);
 
             var result = await _mediator.Send(command);
-            return Ok(new ApiResponseWithData<GetProductsByCategoryResult>
-            {
-                Data = mapper.Map<GetProductsByCategoryResult>(result),
-                Success = true,
-                Message = "Products retrieved successfully"
-            });
+            return OkPaginated(new PaginatedList<ProductDTO>(mapper.Map<List<ProductDTO>>(result.Data),
+                result.TotalItems,
+                request.Page,
+                request.Size));
         }
     }
 }
