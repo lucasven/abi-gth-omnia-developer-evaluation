@@ -10,6 +10,6 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Products.GetProductById
         public string Description { get; set; }
         public string Category { get; set; }
         public string Image { get; set; }
-        public ProductRatingDTO Rating { get; set; }
+        public decimal? Rating { get; set; }
     }
 } 
