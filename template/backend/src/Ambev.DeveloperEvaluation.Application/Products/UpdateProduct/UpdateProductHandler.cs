@@ -25,6 +25,7 @@ namespace Ambev.DeveloperEvaluation.Application.Products.UpdateProduct
                 return null;
 
             _mapper.Map(request, existingProduct);
+            existingProduct.Ratings.Add(_mapper.Map<ProductRating>(request.Rating));
             var updatedProduct = await _productRepository.UpdateAsync(existingProduct);
             return _mapper.Map<UpdateProductResult>(updatedProduct);
         }
