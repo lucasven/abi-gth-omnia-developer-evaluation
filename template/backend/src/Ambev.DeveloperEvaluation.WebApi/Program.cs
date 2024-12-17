@@ -60,6 +60,15 @@ public class Program
             builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
             var app = builder.Build();
+
+            // Apply migrations automatically
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                Log.Information("Applying database migrations...");
+                dbContext.Database.Migrate();
+                Log.Information("Database migrations applied successfully");
+            }
             
             app.UseDefaultLogging();
             
