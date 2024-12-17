@@ -1,5 +1,4 @@
 using Ambev.DeveloperEvaluation.Domain.Common;
-using System.Collections.Generic;
 
 namespace Ambev.DeveloperEvaluation.Domain.Entities
 {
@@ -20,13 +19,14 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
         public string Category { get; set; }
         public string Image { get; set; }
         public ICollection<ProductRating> Ratings { get; set; }
-    }
-
-    public class ProductRating : BaseEntity
-    {
-        public Guid ProductId { get; set; }
-        public Product Product { get; set; }
-        public decimal RateValue { get; set; }
-        public int Count { get; set; }
+        public decimal? Rating
+        {
+            get
+            {
+                return Ratings != null && Ratings.Count > 0 
+                    ? Ratings.Select(r => r.RateValue * (decimal)r.Count).Sum() / Ratings.Select(c => c.Count).Sum()
+                    : null;
+            }
+        }
     }
 } 

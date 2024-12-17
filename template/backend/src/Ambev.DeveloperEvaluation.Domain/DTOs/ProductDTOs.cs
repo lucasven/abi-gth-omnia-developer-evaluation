@@ -10,31 +10,13 @@ namespace Ambev.DeveloperEvaluation.Domain.DTOs
         public string Description { get; set; }
         public string Category { get; set; }
         public string Image { get; set; }
-        public ICollection<ProductRatingDTO> Ratings { get; set; }
-
-        public ProductDTO()
-        {
-            Ratings = new List<ProductRatingDTO>();
-        }
+        public double? Rating { get; set; }
     }
 
     public class ProductRatingDTO
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public decimal RateValue { get; set; }
         public int Count { get; set; }
-    }
-
-    public class ProductListResponseDTO
-    {
-        public IEnumerable<ProductDTO> Data { get; set; }
-        public int TotalItems { get; set; }
-        public int CurrentPage { get; set; }
-        public int TotalPages { get; set; }
-    }
-
-    public class AddProductRatingDTO
-    {
-        public decimal RateValue { get; set; }
     }
 } 
